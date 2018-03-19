@@ -23,7 +23,7 @@ function $(NID){
 
 var dataa=[];
 var urlhead = "http://39.106.198.27:9000/"
-urlhead = "http://192.168.1.109:9000/"
+// urlhead = "http://192.168.1.109:9000/"
 export default class App extends Component {    
   constructor(props){
     super(props)
@@ -65,7 +65,7 @@ export default class App extends Component {
       tabBarPosition='bottom'
       renderTabBar={()=><DefaultTabBar/>}>
 
-        <View tabLabel="tab2" style={styles.container}>
+        <View tabLabel="DDLs" style={styles.container}>
           <TouchableOpacity onPress={()=>this.refreshDDL()}>
               <Text style={{borderWidth:1,textAlign:'center'}}>refresh list</Text>
           </TouchableOpacity>
