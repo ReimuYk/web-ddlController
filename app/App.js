@@ -22,6 +22,7 @@ function $(NID){
 }
 
 var dataa=[];
+var dataa2=[];
 var urlhead = "http://39.106.198.27:9000/"
 // urlhead = "http://192.168.1.109:9000/"
 export default class App extends Component {    
@@ -30,9 +31,14 @@ export default class App extends Component {
     var ds = new ListView.DataSource({
       rowHasChanged:(r1,r2) => r1!==r2,
     })
+    var ds2 = new ListView.DataSource({
+      rowHasChanged:(r1,r2) => r1!==r2,
+    })
     this.state = {
       dataSource:ds,
+      dailyData:ds2,
       data:[{'n1':'data1'}],
+      data2:[],
       newdata_name:'',
       newdata_ddl:'',
       newdata_content:'',
@@ -46,13 +52,34 @@ export default class App extends Component {
           <Text style={{fontWeight:'bold'}}>    DDL:{rowData['ddl']}</Text>
           <Text>    content:{rowData['content']}</Text>
         </View>
-        <View style={{flex:1}}>
+        {/* <View style={{flex:1}}>
           <TouchableOpacity onPress={()=>this.modifyDDL(rowData)}>
             <Text style={{borderWidth:1,textAlign:'center'}}>修改</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
         <View style={{flex:1}}>
           <TouchableOpacity onPress={()=>this.deleteDDL(rowData)}>
+            <Text style={{borderWidth:1,textAlign:'center'}}>删除</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    )
+  }
+  _renderRowDaily(rowData,rowID){
+    return(
+      <View style={{flexDirection:'row'}}>
+        <View style={{borderWidth:1,marginTop:-1,flex:4}}>
+          <Text>    name:{rowData['n1']}  id:{rowData['id']}</Text>
+          <Text style={{fontWeight:'bold'}}>    COUNT:{rowData['ddl']}</Text>
+          <Text>    content:{rowData['content']}</Text>
+        </View>
+        {/* <View style={{flex:1}}>
+          <TouchableOpacity onPress={()=>this.modifyDDL(rowData)}>
+            <Text style={{borderWidth:1,textAlign:'center'}}>修改</Text>
+          </TouchableOpacity>
+        </View> */}
+        <View style={{flex:1}}>
+          <TouchableOpacity onPress={()=>this.deleteDaily(rowData)}>
             <Text style={{borderWidth:1,textAlign:'center'}}>删除</Text>
           </TouchableOpacity>
         </View>
@@ -109,6 +136,29 @@ export default class App extends Component {
           </View>
         </View>
 
+        <View tabLabel="Daily" style={styles.container}>
+          <TouchableOpacity onPress={()=>this.refreshDaily()}>
+              <Text style={{borderWidth:1,textAlign:'center'}}>refresh list</Text>
+          </TouchableOpacity>
+          <ListView
+              dataSource={this.state.dailyData.cloneWithRows(this.state.data2)}
+              renderRow={(rowData,sectionId,rowId)=>this._renderRowDaily(rowData,rowId)}
+              showsVerticalScrollIndicator={false}
+              enableEmptySections = {true}
+          />
+
+          
+        </View>
+
+        {/* <View tabLabel="tab1" style={styles.container}>
+          <TouchableOpacity onPress={()=>this.printdata(urlhead+"else")}>
+              <Text>printdata</Text>
+          </TouchableOpacity>
+          <Text>ajklsd</Text>
+          <TouchableOpacity onPress={()=>this.postdata()}>
+              <Text>postdata</Text>
+          </TouchableOpacity>
+        </View>
 
         <View tabLabel="tab1" style={styles.container}>
           <TouchableOpacity onPress={()=>this.printdata(urlhead+"else")}>
@@ -118,7 +168,8 @@ export default class App extends Component {
           <TouchableOpacity onPress={()=>this.postdata()}>
               <Text>postdata</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
+
 
 
       
@@ -138,6 +189,20 @@ export default class App extends Component {
       }
     })
     this.setState({data:dataa})
+  }
+  refreshDaily = ()=>{
+    let options = {}
+    options.method = 'GET'
+    url = urlhead + 'daily'
+    fetch(url,options).then(function(response){return response.text()})
+    .then(function(data){
+      data = eval('('+data+')')
+      dataa2.splice(0,dataa2.length)
+      for(var i=0;i<data.length;i++){
+        dataa2.push(data[i])
+      }
+    })
+    this.setState({data2:dataa2})
   }
   new_ddl = ()=>{
     url = urlhead+'new/'
@@ -184,6 +249,19 @@ export default class App extends Component {
       console.log('status',res.status)
     })
     this.refreshDDL();
+  }
+  deleteDaily = (rowData)=>{
+    url = urlhead+'deletedaily/'
+    let options = {}
+    options.method = 'POST'
+    options.headers = {'Content-Type':'application/json'}
+    options.body = JSON.stringify({
+      'id':rowData['id']
+    })
+    fetch(url,options).then(function(res){
+      console.log('status',res.status)
+    })
+    this.refreshDaily();
   }
   printdata = (conf)=>{
     console.log("printdata")

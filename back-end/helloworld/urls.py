@@ -24,5 +24,7 @@ urlpatterns = [
     url(r'^else/$', view.hello2),
     url(r'^new/$', view.newblock),
     url(r'^delete/$',view.delete),
-    url(r'^modify/$',view.modify)
+    url(r'^modify/$',view.modify),
+    url(r'^deletedaily/$',view.deleteDaily),
+    url(r'^daily/$',view.daily)
 ]

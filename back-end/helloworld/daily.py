@@ -1,6 +1,7 @@
 # coding: UTF-8
 import time
 import datetime
+import os
 
 refdate = None
 
@@ -25,6 +26,12 @@ def insertDDL(name,ddl,content):
 dailylist = [['']]
 def dailyWork():
     print('daily work refresh')
+    t_hour = datetime.datetime.today().hour
+    if t_hour!=4:
+        return
+    os.remove("./helloworld/datas/daily-res.txt")
+    os.system("copy ./helloworld/datas/daily-ori.txt ./helloworld/datas/daily-res.txt")
+    print("daily refresh!")
 
 weeklylist = [{'trigger':5,'type':'offset','value':5,'time':'24:00','name':'ics','content':'ics周常'},
               {'trigger':2,'type':'offset','value':2,'time':'24:00','name':'database','content':'数据库周常'}]

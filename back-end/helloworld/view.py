@@ -1,3 +1,4 @@
+# coding:UTF-8
 from django.http import HttpResponse,JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -20,6 +21,23 @@ def pack_ddls():
         res.append(item)
     print(l)
     return res
+
+def pack_daily():
+    f = open('./helloworld/datas/daily-res.txt','r')
+    l = f.readlines()
+    f.close()
+    res = []
+    for i in range(len(l)):
+        l[i] = l[i].split()
+        item = {'n1':l[i][1],'id':l[i][0],'ddl':l[i][2],'content':l[i][3]}
+        res.append(item)
+    print(l)
+    return res
+
+def daily(req):
+    resp = [{'n1':'软工导'},{'n1':'web'},{'n1':'ics'}]
+    resp = pack_daily()
+    return HttpResponse(json.dumps(resp),content_type="application/json")
 
 def hello2(req):
     resp = [{'n1':'软工导'},{'n1':'web'},{'n1':'ics'}]
@@ -67,6 +85,23 @@ def delete(req):
     data = f.readlines()
     f.close()
     f = open("./helloworld/datas/ddls.txt",'w')
+    for item in data:
+        if item.split()[0]!=delitem:
+            f.write(item)
+    return HttpResponse(json.dumps(resp), content_type="application/json")
+
+@csrf_exempt
+def deleteDaily(req):
+    resp=[{'stat':'ok'}]
+    print('deleteDaily')
+    u = json.loads(req.read().decode())
+    delitem = u['id']
+    print(u['id'])
+    print(type(delitem))
+    f = open("./helloworld/datas/daily-res.txt",'r')
+    data = f.readlines()
+    f.close()
+    f = open("./helloworld/datas/daily-res.txt",'w')
     for item in data:
         if item.split()[0]!=delitem:
             f.write(item)
